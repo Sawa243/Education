@@ -1,0 +1,70 @@
+# Запрос числа у пользователя
+number = int(input("Введите целое число: "))
+
+# Определение и вывод описания числа
+if number == 0:
+    print("нулевое число")
+elif number > 0:
+    if number % 2 == 0:
+        print("положительное четное число")
+    else:
+        print("положительное нечетное число")
+else:
+    if number % 2 == 0:
+        print("отрицательное четное число")
+    else:
+        print("отрицательное нечетное число")
+
+# Дополнительное сообщение, если число не является четным
+if number % 2 != 0:
+    print("число не является четным")
+
+
+# Запрос слова у пользователя
+word = input("Введите слово из маленьких латинских букв: ")
+
+# Определение гласных и согласных
+vowels = "aeiou"
+consonants = "bcdfghjklmnpqrstvwxyz"
+
+# Подсчет гласных и согласных
+vowel_count = 0
+consonant_count = 0
+vowel_counts = {vowel: 0 for vowel in vowels}
+
+for char in word:
+    if char in vowels:
+        vowel_count += 1
+        vowel_counts[char] += 1
+    elif char in consonants:
+        consonant_count += 1
+
+# Проверка на наличие всех гласных
+all_vowels_present = all(count > 0 for count in vowel_counts.values())
+
+# Вывод результатов
+print(f"Количество гласных: {vowel_count}")
+print(f"Количество согласных: {consonant_count}")
+for vowel, count in vowel_counts.items():
+    print(f"Количество {vowel}: {count}")
+
+if not all_vowels_present:
+    print(False)
+
+
+# Запрос данных у пользователя
+X = int(input("Введите минимальную сумму инвестиций: "))
+A = int(input("Введите сумму денег у Майкла: "))
+B = int(input("Введите сумму денег у Ивана: "))
+
+# Определение возможности инвестиций
+if A >= X and B >= X:
+    print(2)
+elif A >= X:
+    print("Mike")
+elif B >= X:
+    print("Ivan")
+elif A + B >= X:
+    print(1)
+else:
+    print(0)
