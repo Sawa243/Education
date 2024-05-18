@@ -1,0 +1,43 @@
+# Инициализация пустого словаря
+pets = {}
+
+# Ввод информации о питомце
+pet_name = input("Введите имя питомца: ")
+pet_type = input("Введите вид питомца: ")
+pet_age = int(input("Введите возраст питомца: "))
+owner_name = input("Введите имя владельца: ")
+
+# Добавление информации в словарь
+pets[pet_name] = {
+    'Вид питомца': pet_type,
+    'Возраст питомца': pet_age,
+    'Имя владельца': owner_name
+}
+
+# Формирование строки с информацией о возрасте
+if 11 <= pet_age % 100 <= 19:
+    age_str = f"{pet_age} лет"
+else:
+    last_digit = pet_age % 10
+    if last_digit == 1:
+        age_str = f"{pet_age} год"
+    elif 2 <= last_digit <= 4:
+        age_str = f"{pet_age} года"
+    else:
+        age_str = f"{pet_age} лет"
+
+# Получение информации о питомце и вывод строки
+for name, info in pets.items():
+    print(f"Это {info['Вид питомца']} по кличке \"{name}\". Возраст питомца: {age_str}. Имя владельца: {info['Имя владельца']}")
+
+
+
+# Инициализация пустого словаря
+my_dict = {}
+
+# Заполнение словаря с помощью цикла
+for i in range(10, -6, -1):
+    my_dict[i] = i ** i
+
+# Вывод словаря
+print(my_dict)
