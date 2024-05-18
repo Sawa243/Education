@@ -1,0 +1,61 @@
+# Запрос числа N у пользователя
+N = int(input("Введите число N: "))
+
+# Считывание N чисел в список
+numbers = []
+for _ in range(N):
+    numbers.append(int(input()))
+
+# Переворачивание списка
+numbers.reverse()
+
+# Вывод перевернутого списка
+for number in numbers:
+    print(number)
+
+
+# Запрос числа N у пользователя
+N = int(input("Введите число N: "))
+
+# Считывание N чисел в список
+numbers = list(map(int, input().split()))
+
+# Проверка, чтобы количество введенных чисел совпадало с N
+assert len(numbers) == N
+
+# Изменение порядка элементов массива
+modified_numbers = []
+for i in range(N//2):
+    modified_numbers.append(numbers[-(i + 1)])
+    modified_numbers.append(numbers[i])
+if N % 2 == 1:
+    modified_numbers.append(numbers[N//2])
+
+# Вывод измененного массива
+print(" ".join(map(str, modified_numbers)))
+
+
+# Запрос данных у пользователя
+m = int(input("Введите максимальную массу, которую может выдержать одна лодка: "))
+n = int(input("Введите количество рыбаков: "))
+
+# Считывание весов рыбаков в список
+weights = []
+for _ in range(n):
+    weights.append(int(input()))
+
+# Сортировка весов рыбаков
+weights.sort()
+
+# Подсчет минимального количества лодок
+boats = 0
+i, j = 0, n - 1
+
+while i <= j:
+    if weights[i] + weights[j] <= m:
+        i += 1
+    j -= 1
+    boats += 1
+
+# Вывод минимального количества лодок
+print(boats)
