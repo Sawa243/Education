@@ -1,0 +1,38 @@
+# Запрос числа N у пользователя
+N = int(input("Введите количество чисел N: "))
+
+# Считывание N чисел в список
+numbers = list(map(int, input().split()))
+
+# Проверка, чтобы количество введенных чисел совпадало с N
+assert len(numbers) == N
+
+# Подсчет количества различных чисел
+unique_numbers = set(numbers)
+print(len(unique_numbers))
+
+
+# Считывание первого списка чисел
+numbers1 = set(map(int, input("Введите числа первого списка: ").split()))
+
+# Считывание второго списка чисел
+numbers2 = set(map(int, input("Введите числа второго списка: ").split()))
+
+# Подсчет количества общих чисел
+common_numbers = numbers1 & numbers2
+print(len(common_numbers))
+
+
+# Считывание последовательности чисел
+numbers = list(map(int, input("Введите последовательность чисел через пробел: ").split()))
+
+# Множество для хранения уникальных чисел
+seen = set()
+
+# Проверка каждого числа и вывод "YES" или "NO"
+for number in numbers:
+    if number in seen:
+        print("YES")
+    else:
+        print("NO")
+        seen.add(number)
