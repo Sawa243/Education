@@ -1,0 +1,33 @@
+import random
+
+def generate_matrix(rows, cols):
+    """Генерирует матрицу заданного размера с случайными числами."""
+    return [[random.randint(-100, 100) for _ in range(cols)] for _ in range(rows)]
+
+def add_matrices(matrix1, matrix2):
+    """Складывает две матрицы одинакового размера."""
+    rows = len(matrix1)
+    cols = len(matrix1[0])
+    result = [[matrix1[i][j] + matrix2[i][j] for j in range(cols)] for i in range(rows)]
+    return result
+
+def print_matrix(matrix):
+    """Выводит матрицу."""
+    for row in matrix:
+        print(row)
+
+# Генерация двух матриц размером 10x10
+rows, cols = 10, 10
+matrix_1 = generate_matrix(rows, cols)
+matrix_2 = generate_matrix(rows, cols)
+
+# Сложение матриц
+matrix_3 = add_matrices(matrix_1, matrix_2)
+
+# Вывод матриц
+print("Матрица 1:")
+print_matrix(matrix_1)
+print("\nМатрица 2:")
+print_matrix(matrix_2)
+print("\nМатрица 3 (сумма матриц 1 и 2):")
+print_matrix(matrix_3)
