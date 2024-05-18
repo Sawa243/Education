@@ -1,0 +1,184 @@
+import numpy as np
+import pygame
+import random
+import time
+import json
+
+# Инициализация Pygame
+pygame.init()
+
+# Размеры окна и игрового поля
+WIDTH, HEIGHT = 800, 600
+ROWS, COLS = 20, 30  # Размеры игрового поля
+TILE_SIZE = WIDTH // COLS
+
+# Цвета
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+BROWN = (139, 69, 19)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# Создание окна
+win = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Fire Helicopter Game")
+
+# Загрузка изображений
+tree_img = pygame.image.load('tree.png')
+water_img = pygame.image.load('water.png')
+helicopter_img = pygame.image.load('helicopter.png')
+fire_img = pygame.image.load('fire.png')
+
+# Функция для создания игрового поля
+def create_grid(rows, cols):
+    grid = np.zeros((rows, cols))
+    return grid
+
+# Функция для отображения игрового поля
+def draw_grid(win, grid):
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] == 1:
+                win.blit(tree_img, (col * TILE_SIZE, row * TILE_SIZE))
+            elif grid[row][col] == 2:
+                win.blit(water_img, (col * TILE_SIZE, row * TILE_SIZE))
+            elif grid[row][col] == 3:
+                win.blit(fire_img, (col * TILE_SIZE, row * TILE_SIZE))
+            pygame.draw.rect(win, BLACK, (col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE), 1)
+
+# Функция для генерации рек
+def generate_rivers(grid):
+    for _ in range(5):  # Количество рек
+        row = random.randint(0, ROWS-1)
+        for col in range(COLS):
+            grid[row][col] = 2
+
+# Функция для генерации деревьев
+def generate_trees(grid):
+    for _ in range(100):  # Количество деревьев
+        row, col = random.randint(0, ROWS-1), random.randint(0, COLS-1)
+        if grid[row][col] == 0:
+            grid[row][col] = 1
+
+# Класс для вертолета
+class Helicopter:
+    def __init__(self, x, y):
+        self.x = x  # Координата x
+        self.y = y  # Координата y
+        self.water = 0  # Резервуар с водой (0 - пустой, 1 - полный)
+        self.lives = 3  # Количество жизней
+
+    def move(self, dx, dy):
+        self.x += dx  # Перемещение по x
+        self.y += dy  # Перемещение по y
+
+    def pick_up_water(self):
+        self.water = 1  # Наполнение резервуара
+
+    def extinguish_fire(self):
+        self.water = 0  # Опустошение резервуара
+
+# Обработка ввода с клавиатуры
+def handle_keys(heli, grid):
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and heli.x > 0:
+        heli.move(-1, 0)
+    if keys[pygame.K_RIGHT] and heli.x < COLS - 1:
+        heli.move(1, 0)
+    if keys[pygame.K_UP] and heli.y > 0:
+        heli.move(0, -1)
+    if keys[pygame.K_DOWN] and heli.y < ROWS - 1:
+        heli.move(0, 1)
+
+    row, col = heli.y, heli.x
+    # Вертолет берет воду из реки
+    if grid[row][col] == 2 and heli.water == 0:
+        heli.pick_up_water()
+    # Вертолет тушит огонь
+    elif grid[row][col] == 1 and heli.water == 1:
+        grid[row][col] = 0
+        heli.extinguish_fire()
+
+# Функция для распространения огня
+def spread_fire(grid):
+    new_grid = grid.copy()
+    for row in range(ROWS):
+        for col in range(COLS):
+            if grid[row][col] == 3:  # Если это клетка с огнем
+                if row > 0 and grid[row-1][col] == 1:
+                    new_grid[row-1][col] = 3
+                if row < ROWS-1 and grid[row+1][col] == 1:
+                    new_grid[row+1][col] = 3
+                if col > 0 and grid[row][col-1] == 1:
+                    new_grid[row][col-1] = 3
+                if col < COLS-1 and grid[row][col+1] == 1:
+                    new_grid[row][col+1] = 3
+    return new_grid
+
+# Функция для генерации начальных пожаров
+def generate_random_fire(grid):
+    for _ in range(3):  # Количество начальных пожаров
+        row, col = random.randint(0, ROWS-1), random.randint(0, COLS-1)
+        if grid[row][col] == 1:
+            grid[row][col] = 3
+
+# Функция для генерации погодных условий
+def generate_weather():
+    # Пример генерации погоды (солнечно, дождливо)
+    return random.choice(["sunny", "rainy"])
+
+# Функция для сохранения игры
+def save_game(grid, filename="savegame.json"):
+    with open(filename, "w") as f:
+        json.dump(grid.tolist(), f)
+
+# Функция для загрузки игры
+def load_game(filename="savegame.json"):
+    with open(filename, "r") as f:
+        grid = json.load(f)
+    return np.array(grid)
+
+# Основной игровой цикл
+def main():
+    grid = create_grid(ROWS, COLS)  # Создание игрового поля
+    generate_rivers(grid)  # Генерация рек
+    generate_trees(grid)  # Генерация деревьев
+    generate_random_fire(grid)  # Генерация начальных пожаров
+    heli = Helicopter(COLS//2, ROWS//2)  # Создание вертолета
+    run = True
+    score = 0
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    save_game(grid)  # Сохранение игры
+                elif event.key == pygame.K_l:
+                    grid = load_game()  # Загрузка игры
+
+        weather = generate_weather()  # Генерация погодных условий
+        handle_keys(heli, grid)  # Обработка ввода с клавиатуры
+        grid = spread_fire(grid)  # Распространение огня
+
+        win.fill(WHITE)  # Очистка окна
+        draw_grid(win, grid)  # Отображение игрового поля
+        win.blit(helicopter_img, (heli.x * TILE_SIZE, heli.y * TILE_SIZE))  # Отображение вертолета
+
+        if weather == "rainy":
+            # Пример эффекта погоды: уменьшение распространения огня
+            grid = spread_fire(grid)
+        elif weather == "sunny":
+            # Пример эффекта погоды: увеличение распространения огня
+            grid = spread_fire(grid)
+            grid = spread_fire(grid)
+
+        pygame.display.update()  # Обновление окна
+        time.sleep(0.5)  # Интервал обновления пожара
+
+    pygame.quit()  # Завершение работы Pygame
+
+if __name__ == "__main__":
+    main()
