@@ -1,0 +1,78 @@
+class Kassa:
+    def __init__(self):
+        self.balance = 0
+
+    def top_up(self, amount):
+        """Пополнить кассу на указанную сумму"""
+        self.balance += amount
+
+    def count_1000(self):
+        """Подсчитать количество целых тысяч в кассе"""
+        return self.balance // 1000
+
+    def take_away(self, amount):
+        """Изъять указанную сумму из кассы, если достаточно денег"""
+        if amount > self.balance:
+            raise ValueError("Недостаточно денег в кассе")
+        self.balance -= amount
+
+# Пример использования
+kassa = Kassa()
+kassa.top_up(2500)
+print(kassa.count_1000())  # Вывод: 2
+kassa.take_away(1500)
+print(kassa.balance)  # Вывод: 1000
+kassa.take_away(2000)  # Выдаст ошибку: Недостаточно денег в кассе
+
+
+class Turtle:
+    def __init__(self, x=0, y=0, s=1):
+        self.x = x
+        self.y = y
+        self.s = s
+
+    def go_up(self):
+        """Увеличивает y на s"""
+        self.y += self.s
+
+    def go_down(self):
+        """Уменьшает y на s"""
+        self.y -= self.s
+
+    def go_left(self):
+        """Уменьшает x на s"""
+        self.x -= self.s
+
+    def go_right(self):
+        """Увеличивает x на s"""
+        self.x += self.s
+
+    def evolve(self):
+        """Увеличивает s на 1"""
+        self.s += 1
+
+    def degrade(self):
+        """Уменьшает s на 1 или выкидывает ошибку, если s становится ≤ 0"""
+        if self.s <= 1:
+            raise ValueError("s не может быть ≤ 0")
+        self.s -= 1
+
+    def count_moves(self, x2, y2):
+        """Возвращает минимальное количество действий для достижения (x2, y2)"""
+        distance_x = abs(x2 - self.x)
+        distance_y = abs(y2 - self.y)
+        moves_x = (distance_x + self.s - 1) // self.s  # округление вверх
+        moves_y = (distance_y + self.s - 1) // self.s  # округление вверх
+        return moves_x + moves_y
+
+# Пример использования
+turtle = Turtle(0, 0, 1)
+turtle.go_up()
+print(turtle.x, turtle.y)  # Вывод: 0 1
+turtle.go_right()
+print(turtle.x, turtle.y)  # Вывод: 1 1
+turtle.evolve()
+print(turtle.s)  # Вывод: 2
+turtle.degrade()
+print(turtle.s)  # Вывод: 1
+print(turtle.count_moves(5, 5))  # Вывод: 10 (поскольку s=1, нужно 5 движений по x и 5 по y)
